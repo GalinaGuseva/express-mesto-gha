@@ -4,20 +4,20 @@ module.exports = {
     es2021: true,
     commonjs: true,
   },
-  extends: ["eslint:recommended", "airbnb-base", "prettier"],
+  extends: ['airbnb-base'],
   overrides: [],
   parserOptions: {
-    ecmaVersion: "latest",
-    sourceType: "module",
+    ecmaVersion: 'latest',
   },
-  plugins: ["prettier"],
   rules: {
-    "no-underscore-dangle": [
-      "error",
+    'no-underscore-dangle': [
+      'error',
       {
-        allow: ["_id"],
+        allow: ['_id'],
       },
     ],
-    "prettier/prettier": "error",
+    'no-unused-vars': 'warn',
+    'no-console': 'off',
+    'consisten-return': 'off',
   },
 };

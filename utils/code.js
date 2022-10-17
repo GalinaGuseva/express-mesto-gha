@@ -1,8 +1,8 @@
 module.exports.code = {
-  CODE_200: 200, //успешный запрос
+  CODE_200: 200,
   CODE_201: 201,
-  BAD_REQUEST_ERROR: 400, // с запросом что-то не так
-  ERROR_403: 403, // попытка удалить чужую карточку
-  NOT_FOUND_ERROR: 404, // ресурс по переданному _id не найден
-  DEFAULT_ERROR: 500, // на сервере что-то пошло не так
+  BAD_REQUEST_ERROR: 400,
+  ERROR_403: 403,
+  NOT_FOUND_ERROR: 404,
+  DEFAULT_ERROR: 500,
 };

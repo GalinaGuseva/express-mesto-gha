@@ -1,26 +1,27 @@
-const Card = require("../models/card");
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
+const Card = require('../models/card');
+
 const {
   BAD_REQUEST_ERROR,
   NOT_FOUND_ERROR,
   DEFAULT_ERROR,
-} = require("../utils/code");
+} = require('../utils/code');
 const {
   CARD_NOT_FOUND,
   SERVER_ERROR,
   FORBIDDEN_ERROR,
   INCORRECT_ID,
   INCORRECT_DATA,
-} = require("../utils/messages");
+} = require('../utils/messages');
 
 const getCards = (req, res) => {
   Card.find({})
     .orFail(() => {
-      throw new Error("NotFound");
+      throw new Error('NotFound');
     })
     .then((cards) => res.send({ cards }))
     .catch((err) => {
-      if (err.message === "NotFound") {
+      if (err.message === 'NotFound') {
         return res.status(NOT_FOUND_ERROR).send({ message: CARD_NOT_FOUND });
       }
       return res.status(DEFAULT_ERROR).send({ message: SERVER_ERROR, err });
@@ -46,19 +47,17 @@ const createCard = (req, res) => {
 const deleteCard = (req, res) => {
   Card.findById(req.params.cardId)
     .orFail(() => {
-      throw new Error("NotFound");
+      throw new Error('NotFound');
     })
     .then((card) => {
       if (card.owner._id.toString() === req.user._id) {
-        Card.findByIdAndRemove(req.params.cardId).then((element) =>
-          res.send(element)
-        );
+        Card.findByIdAndRemove(req.params.cardId).then((element) => res.send(element));
       } else {
         res.status(BAD_REQUEST_ERROR).send({ message: FORBIDDEN_ERROR });
       }
     })
     .catch((err) => {
-      if (err.message === "NotFound") {
+      if (err.message === 'NotFound') {
         return res.status(NOT_FOUND_ERROR).send({ message: CARD_NOT_FOUND });
       }
       if (err instanceof mongoose.Error.CastError) {
@@ -72,14 +71,14 @@ const likeCard = (req, res) => {
   Card.findByIdAndUpdate(
     req.params.cardId,
     { $addToSet: { likes: req.user._id } },
-    { new: true }
+    { new: true },
   )
     .orFail(() => {
-      throw new Error("NotFound");
+      throw new Error('NotFound');
     })
     .then((card) => res.send(card))
     .catch((err) => {
-      if (err.message === "NotFound") {
+      if (err.message === 'NotFound') {
         return res.status(NOT_FOUND_ERROR).send({ message: CARD_NOT_FOUND });
       }
       if (err instanceof mongoose.Error.CastError) {
@@ -93,14 +92,14 @@ const dislikeCard = (req, res) => {
   Card.findByIdAndUpdate(
     req.params.cardId,
     { $pull: { likes: req.user._id } },
-    { new: true }
+    { new: true },
   )
     .orFail(() => {
-      throw new Error("NotFound");
+      throw new Error('NotFound');
     })
     .then((card) => res.send(card))
     .catch((err) => {
-      if (err.message === "NotFound") {
+      if (err.message === 'NotFound') {
         return res.status(NOT_FOUND_ERROR).send({ message: CARD_NOT_FOUND });
       }
       if (err instanceof mongoose.Error.CastError) {
@@ -110,4 +109,10 @@ const dislikeCard = (req, res) => {
     });
 };
 
-module.exports = { getCards, createCard, deleteCard, likeCard, dislikeCard };
+module.exports = {
+  getCards,
+  createCard,
+  deleteCard,
+  likeCard,
+  dislikeCard,
+};
