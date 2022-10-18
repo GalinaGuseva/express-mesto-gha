@@ -1,20 +1,11 @@
 const mongoose = require('mongoose');
 const Card = require('../models/card');
 
-const { BAD_REQUEST_ERROR, NOT_FOUND_ERROR, DEFAULT_ERROR } = require('../utils/code');
-const {
-  CARD_NOT_FOUND,
-  SERVER_ERROR,
-  FORBIDDEN_ERROR,
-  INCORRECT_ID,
-  INCORRECT_DATA,
-} = require('../utils/messages');
-
 const getCards = (req, res) => {
   Card.find({})
     .then((cards) => res.send(cards))
     .catch(() => {
-      res.status(DEFAULT_ERROR).send({ message: SERVER_ERROR });
+      res.status(500).send({ message: 'На сервере произошла ошибка' });
     });
 };
 
@@ -26,9 +17,9 @@ const createCard = (req, res) => {
     .then((card) => res.send(card))
     .catch((err) => {
       if (err instanceof mongoose.Error.ValidationError) {
-        return res.status(BAD_REQUEST_ERROR).send({ message: INCORRECT_DATA });
+        return res.status(400).send({ message: 'Переданы некорректные данные' });
       }
-      return res.status(DEFAULT_ERROR).send({ message: SERVER_ERROR });
+      return res.status(500).send({ message: 'На сервере произошла ошибка' });
     });
 };
 
@@ -41,17 +32,17 @@ const deleteCard = (req, res) => {
       if (card.owner._id.toString() === req.user._id) {
         Card.findByIdAndRemove(req.params.cardId).then((element) => res.send(element));
       } else {
-        res.status(BAD_REQUEST_ERROR).send({ message: FORBIDDEN_ERROR });
+        res.status(400).send({ message: 'Недостаточно прав для удаления карточки' });
       }
     })
     .catch((err) => {
       if (err.message === 'NotFound') {
-        return res.status(NOT_FOUND_ERROR).send({ message: CARD_NOT_FOUND });
+        return res.status(404).send({ message: 'Карточка не найдена' });
       }
       if (err instanceof mongoose.Error.CastError) {
-        return res.status(BAD_REQUEST_ERROR).send({ message: INCORRECT_ID });
+        return res.status(400).send({ message: 'Некорректный id' });
       }
-      return res.status(DEFAULT_ERROR).send({ message: SERVER_ERROR });
+      return res.status(500).send({ message: 'На сервере произошла ошибка' });
     });
 };
 
@@ -67,12 +58,12 @@ const likeCard = (req, res) => {
     .then((card) => res.send(card))
     .catch((err) => {
       if (err.message === 'NotFound') {
-        return res.status(NOT_FOUND_ERROR).send({ message: CARD_NOT_FOUND });
+        return res.status(404).send({ message: 'Карточка не найдена' });
       }
       if (err instanceof mongoose.Error.CastError) {
-        return res.status(BAD_REQUEST_ERROR).send({ message: INCORRECT_ID });
+        return res.status(400).send({ message: 'Некорректный id' });
       }
-      return res.status(DEFAULT_ERROR).send({ message: SERVER_ERROR });
+      return res.status(500).send({ message: 'На сервере произошла ошибка' });
     });
 };
 
@@ -88,12 +79,12 @@ const dislikeCard = (req, res) => {
     .then((card) => res.send(card))
     .catch((err) => {
       if (err.message === 'NotFound') {
-        return res.status(NOT_FOUND_ERROR).send({ message: CARD_NOT_FOUND });
+        return res.status(404).send({ message: 'Карточка не найдена' });
       }
       if (err instanceof mongoose.Error.CastError) {
-        return res.status(BAD_REQUEST_ERROR).send({ message: INCORRECT_ID });
+        return res.status(400).send({ message: 'Некорректный id' });
       }
-      return res.status(DEFAULT_ERROR).send({ message: SERVER_ERROR });
+      return res.status(500).send({ message: 'На сервере произошла ошибка' });
     });
 };
 

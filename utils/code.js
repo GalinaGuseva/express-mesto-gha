@@ -1,8 +1,0 @@
-module.exports.code = {
-  CODE_200: 200,
-  CODE_201: 201,
-  BAD_REQUEST_ERROR: 400,
-  ERROR_403: 403,
-  NOT_FOUND_ERROR: 404,
-  DEFAULT_ERROR: 500,
-};
