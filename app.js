@@ -1,7 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
-const cards = require('./routes/cards');
 const users = require('./routes/users');
+const cards = require('./routes/cards');
 
 const { PORT = 3000, MONGO_URL = 'mongodb://localhost:27017/mestodb' } = process.env;
 
@@ -13,14 +13,14 @@ app.use(express.json());
 
 app.use((req, res, next) => {
   req.user = {
-    _id: '634d8475395d10ca2832e65d',
+    _id: '634e41cf16d71979b1d72630',
   };
 
   next();
 });
 
-app.use('/users', users);
-app.use('/cards', cards);
+app.use(users);
+app.use(cards);
 
 app.use('*', (req, res) => {
   res.status(404).send({ message: 'Запрашиваемый ресурс не найден' });

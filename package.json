@@ -2,15 +2,15 @@
   "name": "express-mesto-gha",
   "version": "1.0.0",
   "description": "backend Mesto",
-  "main": "index.js",
+  "main": "app.js",
   "scripts": {
     "start": "node app.js",
-    "serve": "nodemon app.js",
+    "dev": "nodemon app.js",
     "lint": "npx eslint .",
     "fix-lint": "npx eslint --fix ."
   },
   "keywords": [],
-  "author": "GG",
+  "author": "Galina Guseva",
   "license": "ISC",
   "dependencies": {
     "body-parser": "^1.20.1",

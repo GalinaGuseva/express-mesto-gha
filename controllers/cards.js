@@ -1,11 +1,7 @@
 const mongoose = require('mongoose');
 const Card = require('../models/card');
 
-const {
-  BAD_REQUEST_ERROR,
-  NOT_FOUND_ERROR,
-  DEFAULT_ERROR,
-} = require('../utils/code');
+const { BAD_REQUEST_ERROR, NOT_FOUND_ERROR, DEFAULT_ERROR } = require('../utils/code');
 const {
   CARD_NOT_FOUND,
   SERVER_ERROR,
@@ -16,31 +12,23 @@ const {
 
 const getCards = (req, res) => {
   Card.find({})
-    .orFail(() => {
-      throw new Error('NotFound');
-    })
-    .then((cards) => res.send({ cards }))
-    .catch((err) => {
-      if (err.message === 'NotFound') {
-        return res.status(NOT_FOUND_ERROR).send({ message: CARD_NOT_FOUND });
-      }
-      return res.status(DEFAULT_ERROR).send({ message: SERVER_ERROR, err });
+    .then((cards) => res.send(cards))
+    .catch(() => {
+      res.status(DEFAULT_ERROR).send({ message: SERVER_ERROR });
     });
 };
 
 const createCard = (req, res) => {
+  const owner = req.user._id;
   const { name, link } = req.body;
 
-  Card.create({ name, link, owner: req.user._id })
-    .then((card) => res.send({ card }))
+  Card.create({ name, link, owner })
+    .then((card) => res.send(card))
     .catch((err) => {
       if (err instanceof mongoose.Error.ValidationError) {
-        return res.status(BAD_REQUEST_ERROR).send({
-          message: INCORRECT_DATA,
-          err,
-        });
+        return res.status(BAD_REQUEST_ERROR).send({ message: INCORRECT_DATA });
       }
-      return res.status(DEFAULT_ERROR).send({ message: SERVER_ERROR, err });
+      return res.status(DEFAULT_ERROR).send({ message: SERVER_ERROR });
     });
 };
 
