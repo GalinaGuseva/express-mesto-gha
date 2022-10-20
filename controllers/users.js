@@ -1,17 +1,15 @@
 const mongoose = require('mongoose');
 const User = require('../models/user');
+const { BAD_REQUEST, NOT_FOUND, DEFAULT_ERROR } = require('../utils/constants');
 
 const getUsers = (req, res) => {
   User.find({})
-    .orFail(() => {
-      throw new Error('NotFound');
-    })
     .then((users) => res.send({ users }))
     .catch((err) => {
       if (err.message === 'NotFound') {
-        return res.status(404).send({ message: 'Пользователи не найдены' });
+        return res.status(NOT_FOUND).send({ message: 'Пользователи не найдены' });
       }
-      return res.status(500).send({ message: 'На сервере произошла ошибка' });
+      return res.status(DEFAULT_ERROR).send({ message: 'На сервере произошла ошибка' });
     });
 };
 
@@ -25,12 +23,14 @@ const getUserId = (req, res) => {
     })
     .catch((err) => {
       if (err.message === 'NotFound') {
-        return res.status(404).send({ message: 'Запрашиваемый пользователь не найден' });
+        return res
+          .status(NOT_FOUND)
+          .send({ message: 'Запрашиваемый пользователь не найден' });
       }
       if (err instanceof mongoose.Error.CastError) {
-        return res.status(400).send({ message: 'Некорректный id' });
+        return res.status(BAD_REQUEST).send({ message: 'Некорректный id' });
       }
-      return res.status(500).send({ message: 'На сервере произошла ошибка' });
+      return res.status(DEFAULT_ERROR).send({ message: 'На сервере произошла ошибка' });
     });
 };
 
@@ -41,9 +41,9 @@ const createUser = (req, res) => {
     .then((user) => res.send(user))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        return res.status(400).send({ message: 'Переданы некорректные данные' });
+        return res.status(BAD_REQUEST).send({ message: 'Переданы некорректные данные' });
       }
-      return res.status(500).send({ message: 'На сервере произошла ошибка' });
+      return res.status(DEFAULT_ERROR).send({ message: 'На сервере произошла ошибка' });
     });
 };
 
@@ -61,15 +61,17 @@ const updateUser = (req, res) => {
     .then((user) => res.send(user))
     .catch((err) => {
       if (err.message === 'NotFound') {
-        return res.status(404).send({ message: 'Запрашиваемый пользователь не найден' });
+        return res
+          .status(NOT_FOUND)
+          .send({ message: 'Запрашиваемый пользователь не найден' });
       }
       if (err instanceof mongoose.Error.ValidationError) {
-        return res.status(400).send({ message: 'Переданы некорректные данные' });
+        return res.status(BAD_REQUEST).send({ message: 'Переданы некорректные данные' });
       }
       if (err instanceof mongoose.Error.CastError) {
-        return res.status(400).send({ message: 'Некорректный id' });
+        return res.status(BAD_REQUEST).send({ message: 'Некорректный id' });
       }
-      return res.status(500).send({ message: 'На сервере произошла ошибка' });
+      return res.status(DEFAULT_ERROR).send({ message: 'На сервере произошла ошибка' });
     });
 };
 
@@ -83,15 +85,17 @@ const updateAvatar = (req, res) => {
     .then((newAvatar) => res.send(newAvatar))
     .catch((err) => {
       if (err.message === 'NotFound') {
-        return res.status(404).send({ message: 'Запрашиваемый пользователь не найден' });
+        return res
+          .status(NOT_FOUND)
+          .send({ message: 'Запрашиваемый пользователь не найден' });
       }
       if (err instanceof mongoose.Error.ValidationError) {
-        return res.status(400).send({ message: 'Переданы некорректные данные' });
+        return res.status(BAD_REQUEST).send({ message: 'Переданы некорректные данные' });
       }
       if (err instanceof mongoose.Error.CastError) {
-        return res.status(400).send({ message: 'Некорректный id' });
+        return res.status(BAD_REQUEST).send({ message: 'Некорректный id' });
       }
-      return res.status(500).send({ message: 'На сервере произошла ошибка' });
+      return res.status(DEFAULT_ERROR).send({ message: 'На сервере произошла ошибка' });
     });
 };
 
