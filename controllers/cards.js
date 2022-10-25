@@ -1,6 +1,10 @@
 const mongoose = require('mongoose');
 const Card = require('../models/card');
-const { BAD_REQUEST, NOT_FOUND, DEFAULT_ERROR } = require('../utils/constants');
+const {
+  BAD_REQUEST,
+  NOT_FOUND,
+  DEFAULT_ERROR,
+} = require('../middlewares/errors/error-code');
 
 const getCards = (req, res) => {
   Card.find({})
@@ -11,10 +15,7 @@ const getCards = (req, res) => {
 };
 
 const createCard = (req, res) => {
-  const owner = req.user._id;
-  const { name, link } = req.body;
-
-  Card.create({ name, link, owner })
+  Card.create({ name: req.body.name, link: req.body.link, owner: req.user._id })
     .then((card) => res.send(card))
     .catch((err) => {
       if (err instanceof mongoose.Error.ValidationError) {

@@ -1,7 +1,11 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const { errors } = require('celebrate');
+const { login, createUser } = require('./controllers/users');
+const auth = require('./middlewares/auth');
 const users = require('./routes/users');
 const cards = require('./routes/cards');
+const NotFoundError = require('./middlewares/errors/not-found-err');
 
 const { PORT = 3000, MONGO_URL = 'mongodb://localhost:27017/mestodb' } = process.env;
 
@@ -11,19 +15,29 @@ const app = express();
 
 app.use(express.json());
 
-app.use((req, res, next) => {
-  req.user = {
-    _id: '634e41cf16d71979b1d72630',
-  };
+app.post('/signin', login);
+app.post('/signup', createUser);
 
-  next();
+// авторизация
+app.use(auth);
+
+// роуты, которым авторизация нужна
+app.use('/cards', cards);
+app.use('/users', users);
+
+app.use((req, res, next) => {
+  next(new NotFoundError('Страница не найдена'));
 });
 
-app.use(users);
-app.use(cards);
+app.use(errors());
 
-app.use('*', (req, res) => {
-  res.status(404).send({ message: 'Запрашиваемый ресурс не найден' });
+app.use((err, req, res, next) => {
+  const code = err.statusCode || 500;
+  res
+    .status(code)
+    .send({ message: code === 500 ? 'На сервере произошла ошибка' : err.message, err });
+
+  next();
 });
 
 app.listen(PORT);
