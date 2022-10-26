@@ -49,7 +49,7 @@ const createUser = (req, res, next) => {
       return bcrypt.hash(password, 10);
     })
     .then((hash) => User.create({ email, password: hash, name, about, avatar }))
-    .then((user) => res.send(user))
+    .then((user) => res.status(200).send(user))
     .catch((err) => {
       if (err instanceof mongoose.Error.ValidationError) {
         next(new BadRequestError('Переданы некорректные данные'));

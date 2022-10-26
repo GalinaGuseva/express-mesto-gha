@@ -1,6 +1,10 @@
 const express = require('express');
+const cookieParser = require('cookie-parser');
+const helmet = require('helmet');
+const rateLimit = require('express-rate-limit');
 const mongoose = require('mongoose');
 const { errors } = require('celebrate');
+const { register, signin } = require('./middlewares/validation');
 const { login, createUser } = require('./controllers/users');
 const auth = require('./middlewares/auth');
 const users = require('./routes/users');
@@ -14,14 +18,21 @@ mongoose.connect(MONGO_URL);
 const app = express();
 
 app.use(express.json());
+app.use(cookieParser());
+app.use(helmet());
 
-app.post('/signin', login);
-app.post('/signup', createUser);
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 100,
+});
 
-// авторизация
+app.use(limiter);
+
+app.post('/signin', signin, login);
+app.post('/signup', register, createUser);
+
 app.use(auth);
 
-// роуты, которым авторизация нужна
 app.use('/cards', cards);
 app.use('/users', users);
 
