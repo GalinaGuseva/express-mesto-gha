@@ -1,7 +1,7 @@
 const { NOT_AUTH } = require('./error-code');
 
 class UnauthorizedError extends Error {
-  constructor(message = 'Неправильный логин или пароль') {
+  constructor(message) {
     super(message);
     this.statusCode = NOT_AUTH;
   }
