@@ -5,7 +5,6 @@ const User = require('../models/user');
 const NotFoundError = require('../middlewares/errors/not-found-err');
 const BadRequestError = require('../middlewares/errors/bad-request-err');
 const ConflictError = require('../middlewares/errors/conflict-err');
-const UnauthorizedError = require('../middlewares/errors/unauthorized-err');
 
 const getUsers = (req, res, next) => {
   User.find({})
@@ -63,7 +62,7 @@ const login = (req, res, next) => {
 
   return User.findUserByCredentials(email, password)
     .then((user) => {
-      const token = jwt.sign({ _id: user._id }, 'one-secret-key', {
+      const token = jwt.sign({ _id: user._id }, 'some-secret-key', {
         expiresIn: '7d',
       });
 
@@ -72,11 +71,9 @@ const login = (req, res, next) => {
           maxAge: 3600000 * 24 * 7,
           httpOnly: true,
         })
-        .json({ message: 'Успешная авторизация' });
+        .send({ message: 'Успешная авторизация' });
     })
-    .catch(() => {
-      next(new UnauthorizedError('Некорректный id'));
-    });
+    .catch(next);
 };
 
 const updateUser = (req, res, next) => {
