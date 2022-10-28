@@ -19,12 +19,6 @@ const signin = celebrate({
   }),
 });
 
-const valGetUser = celebrate({
-  params: Joi.object().keys({
-    userId: Joi.string().hex().required().length(24),
-  }),
-});
-
 const valUpdateUser = celebrate({
   body: Joi.object().keys({
     name: Joi.string().required().min(2).max(30),
@@ -34,29 +28,28 @@ const valUpdateUser = celebrate({
 
 const valNewAvatar = celebrate({
   body: Joi.object().keys({
-    avatar: Joi.string().pattern(patternUrl),
+    avatar: Joi.string().required().pattern(patternUrl),
   }),
 });
 
 const valNewCard = celebrate({
   body: Joi.object().keys({
     name: Joi.string().required().min(2).max(30),
-    link: Joi.string().pattern(patternUrl),
+    link: Joi.string().required().pattern(patternUrl),
   }),
 });
 
-const valIdCard = celebrate({
+const valId = celebrate({
   params: Joi.object().keys({
-    cardId: Joi.string().hex().required().length(24),
+    _id: Joi.string().hex().required().length(24),
   }),
 });
 
 module.exports = {
   register,
   signin,
-  valGetUser,
   valUpdateUser,
   valNewAvatar,
   valNewCard,
-  valIdCard,
+  valId,
 };
