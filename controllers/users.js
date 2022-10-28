@@ -13,9 +13,9 @@ const getUsers = (req, res, next) => {
 };
 
 const getCurrentUser = (req, res, next) => {
-  const { _id } = req.user;
+  const id = req.user._id;
 
-  User.findById(_id)
+  User.findById(id)
     .orFail(() => {
       throw new NotFoundError('Пользователь с таким id не найден');
     })
@@ -36,24 +36,27 @@ const getUserId = (req, res, next) => {
       return next(err);
     });
 };
-
+// prettier-ignore
 const createUser = (req, res, next) => {
   const { email, password, name, about, avatar } = req.body;
 
-  User.findOne({ email })
-    .then((user) => {
-      if (user) {
-        throw new ConflictError('Пользователь с таким email уже зарегистрирован');
-      }
-      return bcrypt.hash(password, 10);
-    })
+  bcrypt
+    .hash(password, 10)
     .then((hash) => User.create({ email, password: hash, name, about, avatar }))
-    .then((user) => res.status(200).send(user))
+    .then((user) => res.send({
+      name: user.name,
+      about: user.about,
+      avatar: user.avatar,
+      email: user.email,
+    }))
     .catch((err) => {
-      if (err instanceof mongoose.Error.ValidationError) {
-        next(new BadRequestError('Переданы некорректные данные'));
+      if (err.code === 11000) {
+        next(new ConflictError('Пользователь с таким email уже существует'));
+      } else if (err instanceof mongoose.Error.ValidationError) {
+        return next(new BadRequestError('Переданы некорректные данные'));
+      } else {
+        return next(err);
       }
-      return next(err);
     });
 };
 
