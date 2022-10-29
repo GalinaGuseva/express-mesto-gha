@@ -12,17 +12,6 @@ const getUsers = (req, res, next) => {
     .catch(next);
 };
 
-const getCurrentUser = (req, res, next) => {
-  const id = req.user._id;
-
-  User.findById(id)
-    .orFail(() => {
-      throw new NotFoundError('Пользователь с таким id не найден');
-    })
-    .then((user) => res.status(200).send(user))
-    .catch((err) => next(err));
-};
-
 const getUserId = (req, res, next) => {
   User.findById(req.params.userId)
     .orFail(() => {
@@ -77,6 +66,17 @@ const login = (req, res, next) => {
         .send({ message: 'Успешная авторизация' });
     })
     .catch(next);
+};
+
+const getCurrentUser = (req, res, next) => {
+  const id = req.user._id;
+
+  User.findById(id)
+    .orFail(() => {
+      throw new NotFoundError('Пользователь с таким id не найден');
+    })
+    .then((user) => res.status(200).send(user))
+    .catch((err) => next(err));
 };
 
 const updateUser = (req, res, next) => {
