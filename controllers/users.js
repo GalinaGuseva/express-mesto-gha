@@ -36,7 +36,7 @@ const getUserId = (req, res, next) => {
       return next(err);
     });
 };
-// prettier-ignore
+
 const createUser = (req, res, next) => {
   const { email, password, name, about, avatar } = req.body;
 
@@ -101,7 +101,11 @@ const updateUser = (req, res, next) => {
 const updateAvatar = (req, res, next) => {
   const { avatar } = req.body;
 
-  User.findByIdAndUpdate(req.user._id, { avatar }, { new: true, runValidators: true })
+  User.findByIdAndUpdate(
+    req.user._id,
+    { avatar },
+    { new: true, runValidators: true },
+  )
     .orFail(() => {
       throw new NotFoundError('Пользователь с таким id не найден');
     })

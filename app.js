@@ -1,7 +1,6 @@
 const express = require('express');
 const cookieParser = require('cookie-parser');
 const helmet = require('helmet');
-const rateLimit = require('express-rate-limit');
 const mongoose = require('mongoose');
 const { errors } = require('celebrate');
 const { register, signin } = require('./middlewares/validation');
@@ -20,13 +19,6 @@ const app = express();
 app.use(express.json());
 app.use(cookieParser());
 app.use(helmet());
-
-const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: 100,
-});
-
-app.use(limiter);
 
 app.post('/signin', signin, login);
 app.post('/signup', register, createUser);
