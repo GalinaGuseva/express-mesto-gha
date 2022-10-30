@@ -7,7 +7,7 @@ const auth = (req, res, next) => {
       return req.cookies.jwt;
     } if (req.headers.authorization) {
       return req.headers.authorization.replace('Bearer ', '');
-    } return next(new UnauthorizedError('Необходима авторизация'));
+    }
   };
 
   let payload;
