@@ -5,6 +5,7 @@ const User = require('../models/user');
 const NotFoundError = require('../middlewares/errors/not-found-err');
 const BadRequestError = require('../middlewares/errors/bad-request-err');
 const ConflictError = require('../middlewares/errors/conflict-err');
+const SECRET = require('../utils/constants');
 
 const getUsers = (req, res, next) => {
   User.find({})
@@ -54,15 +55,14 @@ const login = (req, res, next) => {
 
   return User.findUserByCredentials(email, password)
     .then((user) => {
-      const token = jwt.sign({ _id: user._id }, 'some-secret-key', {
+      const token = jwt.sign({ _id: user._id }, SECRET, {
         expiresIn: '7d',
       });
 
-      res
-        .cookie('jwt', token, {
-          maxAge: 3600000 * 24 * 7,
-          httpOnly: true,
-        })
+      res.cookie('jwt', token, {
+        maxAge: 3600000 * 24 * 7,
+        httpOnly: true,
+      })
         .send({ message: 'Успешная авторизация' });
     })
     .catch(next);
