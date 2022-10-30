@@ -5,7 +5,6 @@ const User = require('../models/user');
 const NotFoundError = require('../middlewares/errors/not-found-err');
 const BadRequestError = require('../middlewares/errors/bad-request-err');
 const ConflictError = require('../middlewares/errors/conflict-err');
-const SECRET = require('../utils/constants');
 
 const getUsers = (req, res, next) => {
   User.find({})
@@ -55,7 +54,7 @@ const login = (req, res, next) => {
 
   return User.findUserByCredentials(email, password)
     .then((user) => {
-      const token = jwt.sign({ _id: user._id }, SECRET, {
+      const token = jwt.sign({ _id: user._id }, 'super-strong-secret', {
         expiresIn: '7d',
       });
 
