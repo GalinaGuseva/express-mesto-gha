@@ -13,20 +13,6 @@ const getUsers = (req, res, next) => {
     .catch(next);
 };
 
-const getUserId = (req, res, next) => {
-  User.findById(req.params.userId)
-    .orFail(() => {
-      throw new NotFoundError('Пользователь с таким id не найден');
-    })
-    .then((user) => res.status(200).send(user))
-    .catch((err) => {
-      if (err.name === 'CastError') {
-        next(new BadRequestError('Некорректный id'));
-      }
-      return next(err);
-    });
-};
-
 const createUser = (req, res, next) => {
   const { email, password, name, about, avatar } = req.body;
 
@@ -113,7 +99,22 @@ const updateAvatar = (req, res, next) => {
     .then((newAvatar) => res.send(newAvatar))
     .catch((err) => {
       if (err instanceof mongoose.Error.ValidationError) {
-        next(new BadRequestError('Переданы некорректные данные'));
+        return next(new BadRequestError('Переданы некорректные данные'));
+      }
+      return next(err);
+    });
+};
+
+const getUserId = (req, res, next) => {
+  User.findById(req.params._id)
+    .orFail(() => {
+      throw new NotFoundError('Пользователь с таким id не найден');
+    })
+    .then((user) => res.status(200).send(user))
+    .catch((err) => {
+      console.log(err);
+      if (err.name === 'CastError') {
+        next(new BadRequestError('Некорректный id'));
       }
       return next(err);
     });
