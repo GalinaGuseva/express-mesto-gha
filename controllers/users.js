@@ -7,12 +7,6 @@ const BadRequestError = require('../middlewares/errors/bad-request-err');
 const ConflictError = require('../middlewares/errors/conflict-err');
 const SECRET_JWT = require('../utils/constants');
 
-const getUsers = (req, res, next) => {
-  User.find({})
-    .then((users) => res.send({ users }))
-    .catch(next);
-};
-
 const createUser = (req, res, next) => {
   const {
     email, password, name, about, avatar,
@@ -57,9 +51,14 @@ const login = (req, res, next) => {
     .catch(next);
 };
 
+const getUsers = (req, res, next) => {
+  User.find({})
+    .then((users) => res.send({ users }))
+    .catch(next);
+};
+
 const getCurrentUser = (req, res, next) => {
   const id = req.user._id;
-
   User.findById(id)
     .orFail(() => {
       throw new NotFoundError('Пользователь с таким id не найден');
