@@ -14,11 +14,15 @@ const getUsers = (req, res, next) => {
 };
 
 const createUser = (req, res, next) => {
-  const { email, password, name, about, avatar } = req.body;
+  const {
+    email, password, name, about, avatar,
+  } = req.body;
 
   bcrypt
     .hash(password, 10)
-    .then((hash) => User.create({ email, password: hash, name, about, avatar }))
+    .then((hash) => User.create({
+      email, password: hash, name, about, avatar,
+    }))
     .then((user) => res.send({
       name: user.name,
       about: user.about,
@@ -27,12 +31,10 @@ const createUser = (req, res, next) => {
     }))
     .catch((err) => {
       if (err.code === 11000) {
-        next(new ConflictError('Пользователь с таким email уже существует'));
-      } else if (err instanceof mongoose.Error.ValidationError) {
+        return next(new ConflictError('Пользователь с таким email уже существует'));
+      } if (err instanceof mongoose.Error.ValidationError) {
         return next(new BadRequestError('Переданы некорректные данные'));
-      } else {
-        return next(err);
-      }
+      } return next(err);
     });
 };
 
@@ -62,7 +64,7 @@ const getCurrentUser = (req, res, next) => {
     .orFail(() => {
       throw new NotFoundError('Пользователь с таким id не найден');
     })
-    .then((user) => res.status(200).send(user))
+    .then((user) => res.send(user))
     .catch((err) => next(err));
 };
 
@@ -110,9 +112,8 @@ const getUserId = (req, res, next) => {
     .orFail(() => {
       throw new NotFoundError('Пользователь с таким id не найден');
     })
-    .then((user) => res.status(200).send(user))
+    .then((user) => res.send(user))
     .catch((err) => {
-      console.log(err);
       if (err.name === 'CastError') {
         next(new BadRequestError('Некорректный id'));
       }

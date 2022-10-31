@@ -10,10 +10,6 @@
     "ecmaVersion": "latest"
   },
   "rules": {
-    "no-console": "off",
-    "consistent-return": "off",
-    "object-curly-newline": "off",
-    "no-unused-vars": "warn",
     "no-underscore-dangle": [
       "error",
       {

@@ -14,7 +14,7 @@ const getCards = (req, res, next) => {
 
 const createCard = (req, res, next) => {
   Card.create({ name: req.body.name, link: req.body.link, owner: req.user._id })
-    .then((card) => res.status(200).send(card))
+    .then((card) => res.send(card))
     .catch((err) => {
       if (err instanceof mongoose.Error.ValidationError) {
         next(new BadRequestError('Переданы некорректные данные'));
@@ -35,7 +35,7 @@ const deleteCard = (req, res, next) => {
       }
       return card
         .remove()
-        .then(() => res.status(200).send({ message: 'Карточка удалена' }));
+        .then(() => res.send({ message: 'Карточка удалена' }));
     })
     .catch((err) => {
       if (err.name === 'CastError') {
@@ -61,7 +61,7 @@ const likeCard = (req, res, next) => {
         next(new BadRequestError('Неправильный id карточки'));
         return;
       }
-      return next(err);
+      next(err);
     });
 };
 
@@ -80,7 +80,7 @@ const dislikeCard = (req, res, next) => {
         next(new BadRequestError('Неправильный id карточки'));
         return;
       }
-      return next(err);
+      next(err);
     });
 };
 
